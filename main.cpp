@@ -18,24 +18,25 @@ int main(int argc, char *argv[])
     QWidget *mywidget = new QWidget();
     mywidget->setGeometry(300,300,500,400);
     mywidget->setFixedSize(300,400);
-    mywidget->setStyleSheet("background-color: moccasin;");
+    mywidget->setStyleSheet("background-color: linen;");
 
     QLabel *mylabel = new QLabel("2048",mywidget);
     mylabel->setGeometry(10,50,100,40);
     mylabel->setText("<html><head/><body><p><span style=\" font: 24pt Adobe Arabic; color:#000000;\">2048!</span></p></body></html>");
 
-
-    QPushButton *button = new QPushButton("reset",mywidget);
-    button->setGeometry(250,50,40,40);
-    QObject::connect(button,SIGNAL(clicked()),&a,SLOT(quit()));
-
-    QLCDNumber *score = new QLCDNumber(10,mywidget);
-    score->setSegmentStyle(QLCDNumber::Flat);
-    score->setGeometry(150,50,100,40);
-    score->display(0);
-
     Block *game = new Block(mywidget);
+
+    QPushButton *reset_button = new QPushButton("reset",mywidget);
+    reset_button->setGeometry(250,50,40,20);
+    QObject::connect(reset_button,SIGNAL(clicked()),&a,SLOT(game()));
+
+    QPushButton *quit_button = new QPushButton("quit",mywidget);
+    quit_button->setGeometry(250,70,40,20);
+    QObject::connect(quit_button,SIGNAL(clicked()),&a,SLOT(quit()));
+
+
     game->setFocus();
+
     game->game();
 
 
