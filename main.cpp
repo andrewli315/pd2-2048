@@ -8,9 +8,10 @@
 #include<QGraphicsScene>
 #include<QGraphicsRectItem>
 #include<QGraphicsView>
-
-
-
+#include<QToolBar>
+#include<QMenuBar>
+#include<QMenu>
+#include<QtGui>
 
 int main(int argc, char *argv[])
 {
@@ -20,22 +21,23 @@ int main(int argc, char *argv[])
     mywidget->setFixedSize(300,400);
     mywidget->setStyleSheet("background-color: linen;");
 
-    QLabel *mylabel = new QLabel("2048",mywidget);
-    mylabel->setGeometry(10,50,100,40);
-    mylabel->setText("<html><head/><body><p><span style=\" font: 24pt Adobe Arabic; color:#000000;\">2048!</span></p></body></html>");
-
-    Block *game = new Block(mywidget);
-
-    QPushButton *reset_button = new QPushButton("reset",mywidget);
-    reset_button->setGeometry(250,50,40,20);
-    QObject::connect(reset_button,SIGNAL(clicked()),&a,SLOT(game()));
 
     QPushButton *quit_button = new QPushButton("quit",mywidget);
-    quit_button->setGeometry(250,70,40,20);
+    quit_button->setGeometry(240,70,50,25);
     QObject::connect(quit_button,SIGNAL(clicked()),&a,SLOT(quit()));
 
 
+
+    QLabel *mylabel = new QLabel("2048",mywidget);
+    mylabel->setGeometry(30,50,100,50);
+    mylabel->setText("<html><head/><body><p><span style=\" font: 27pt Adobe Arabic; color:#000000;\">2048!</span></p></body></html>");
+
+    Block *game = new Block(mywidget);
     game->setFocus();
+
+
+    game->setFocusPolicy(Qt::TabFocus);
+
 
     game->game();
 

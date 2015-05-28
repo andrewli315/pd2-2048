@@ -9,6 +9,7 @@
 #include<QTimer>
 #include<QPushButton>
 #include<QLCDNumber>
+#include<QMessageBox>
 
 
 Block::Block(QWidget *parent): QLabel(parent){
@@ -17,11 +18,13 @@ Block::Block(QWidget *parent): QLabel(parent){
 
     s = new QLCDNumber(10,parent);
     s->setSegmentStyle(QLCDNumber::Flat);
-    s->setGeometry(150,50,100,40);
+    s->setGeometry(130,50,100,50);
     s->display(score);
 
-
-
+    QPushButton *reset_button = new QPushButton("reset",parent);
+    reset_button->setGeometry(240,50,50,25);
+    reset_button->isDefault();
+    QObject::connect(reset_button,SIGNAL(clicked()),this,SLOT(game()));
 
     for(int i=0;i<16;i++)
     {
@@ -103,7 +106,7 @@ void Block::reset()
 
 void Block::keyPressEvent(QKeyEvent *event)
 {
-
+    if(isgameover() == false){
     if(event->key() == Qt::Key_Up)
     {
             rotate();
@@ -144,17 +147,53 @@ void Block::keyPressEvent(QKeyEvent *event)
             judge();
             hi();
     }
-    s->display(score);
+    }
+    else if(isgameover()==true){
+        if(isgameover() == true)
+        {
+            QMessageBox gameover_message;
+            QPushButton *reset_btn = gameover_message.addButton(tr("reset"),QMessageBox::ActionRole);
+            QPushButton *abort_btn = gameover_message.addButton(QMessageBox::Abort);
+            gameover_message.exec();
+            if(gameover_message.clickedButton() == reset_btn)
+            {
+                QObject::connect(reset_btn,SIGNAL(clicked()),this,SLOT(game()));
+                reset();
+            }
+            else if(gameover_message.clickedButton() == abort_btn)
+            {
+               QObject::connect(abort_btn,SIGNAL(clicked()),this,SLOT(quit()));
+            }
+        }
+    }
+
+}
+
+bool Block::isgameover()
+{
+    endofgame();
+    rotate();
+    endofgame();
+    rotate();
+    endofgame();
+    rotate();
+    endofgame();
+    rotate();
+    return gameover;
 }
 
 void Block::game()
 {
     score = 0;
+
     hi();
     reset();
     judge();
     hi();
+
 }
+
+
 
 
 void Block::hi()
@@ -179,9 +218,12 @@ void Block::hi()
 
 void Block::movedata()
 {
+    canmove =0;
+
     move();
     merge();
     move();
+
 
 }
 
@@ -197,6 +239,8 @@ void Block::move()
                 current[j][i] = current[j-1][i];
                 current[j-1][i] =0;
                 j=1;
+
+                canmove++;
             }
         }
     }
@@ -208,11 +252,11 @@ void Block::merge()
     {
         for(int j=4;j>0;j--)
         {
-            if(current[j][i] == current[j-1][i])
+            if(current[j][i] == current[j-1][i] && current[j][i] != 0)
             {
                 current[j][i] = current[j-1][i] + current[j][i];
                 current[j-1][i] =0;
-                canmove = 1;
+                canmove++;
                 score = score+current[j][i];
             }
         }
@@ -228,12 +272,16 @@ void Block::generateNewnumber()
     index = rand()%2;
     loc_x = 1;
     loc_y = 1;
+    if(canmove >= 1){
     while(current[loc_y][loc_x] != 0)
     {
     loc_x = rand()%4+1;
     loc_y = rand()%4+1;
     }
     current[loc_y][loc_x] = num[index];
+    }
+    else
+        return;
 }
 
 void Block::rotate()
@@ -349,6 +397,31 @@ void Block::judge()
 
         }
     }
+    s->display(score);
+}
+
+bool Block::endofgame()
+{
+    for(int i=1;i<5;i++)
+    {
+        for(int j=1;j<5;j++)
+        {
+            if(current[j][i] == current[j-1][i] && current[j][i] != 0)
+            {
+               return gameover = false;
+            }
+            else if(current[j][i] == 0)
+            {
+                return gameover = false;
+            }
+            else
+            {
+                gameover = true;
+            }
+
+        }
+    }
+    return gameover;
 }
 
 

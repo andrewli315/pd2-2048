@@ -21,7 +21,6 @@ public:
     QLabel *b[16];
 public slots:
     void game();
-
 private:
     void hi();
     void movedata();
@@ -30,6 +29,8 @@ private:
     void generateNewnumber();
     void rotate();
     void judge();
+    bool endofgame();
+    bool gameover;
     int canmove;
     QString color[20];
     QString value[20];
