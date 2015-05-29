@@ -16,12 +16,22 @@ Block::Block(QWidget *parent): QLabel(parent){
 
     score= 0;
 
+    endscene = new QLabel(parent);
+    endscene->setGeometry(0,0,500,400);
+    endscene->setText("<html><head/><body><p><span style=\" font: 50pt Adobe Arabic; color:#FFFFFF;\">GAME OVER!</span></p></body></html>");
+    endscene->setStyleSheet("background-color: black;");
+    endscene->hide();
+
+     endreset = new QPushButton("reset",parent);
+     endreset->setGeometry(125,250,60,30);
+     endreset->hide();
+
     s = new QLCDNumber(10,parent);
     s->setSegmentStyle(QLCDNumber::Flat);
     s->setGeometry(130,50,100,50);
     s->display(score);
 
-    QPushButton *reset_button = new QPushButton("reset",parent);
+    reset_button = new QPushButton("reset",parent);
     reset_button->setGeometry(240,50,50,25);
     reset_button->isDefault();
     QObject::connect(reset_button,SIGNAL(clicked()),this,SLOT(game()));
@@ -149,22 +159,27 @@ void Block::keyPressEvent(QKeyEvent *event)
     }
     }
     else if(isgameover()==true){
-        if(isgameover() == true)
-        {
+
+            endscene->show();
+            reset_button->hide();
+            for(int i=0;i<16;i++)
+                b[i]->hide();
+            s->hide();
+
+            QObject::connect(endreset,SIGNAL(clicked()),this,SLOT(game()));
+            endreset->show();
             QMessageBox gameover_message;
-            QPushButton *reset_btn = gameover_message.addButton(tr("reset"),QMessageBox::ActionRole);
-            QPushButton *abort_btn = gameover_message.addButton(QMessageBox::Abort);
+            gameover_message.setText("game is over");
+            gameover_message.setGeometry(400,250,500,500);
+            gameover_message.setWindowTitle("gameover");
+            QPushButton *OK_btn = gameover_message.addButton(tr("OK"),QMessageBox::AcceptRole);
             gameover_message.exec();
-            if(gameover_message.clickedButton() == reset_btn)
+            if(gameover_message.clickedButton() == OK_btn)
             {
-                QObject::connect(reset_btn,SIGNAL(clicked()),this,SLOT(game()));
-                reset();
+               QObject::connect(OK_btn,SIGNAL(clicked()),this,SLOT(quit()));
             }
-            else if(gameover_message.clickedButton() == abort_btn)
-            {
-               QObject::connect(abort_btn,SIGNAL(clicked()),this,SLOT(quit()));
-            }
-        }
+
+
     }
 
 }
@@ -185,7 +200,9 @@ bool Block::isgameover()
 void Block::game()
 {
     score = 0;
-
+    endscene->hide();
+    endreset->hide();
+    reset_button->show();
     hi();
     reset();
     judge();

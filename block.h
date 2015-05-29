@@ -8,6 +8,7 @@
 #include<QLabel>
 #include<QWidget>
 #include<QString>
+#include<QPushButton>
 #include<QLCDNumber>
 class Block: public QLabel{
     Q_OBJECT
@@ -32,6 +33,9 @@ private:
     bool endofgame();
     bool gameover;
     int canmove;
+    QPushButton *reset_button;
+    QPushButton *endreset;
+    QLabel *endscene;
     QString color[20];
     QString value[20];
     QLCDNumber *s;

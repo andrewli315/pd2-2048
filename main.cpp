@@ -21,8 +21,7 @@ int main(int argc, char *argv[])
     mywidget->setFixedSize(300,400);
     mywidget->setStyleSheet("background-color: linen;");
 
-
-    QPushButton *quit_button = new QPushButton("quit",mywidget);
+    QPushButton *quit_button= new QPushButton("quit",mywidget);
     quit_button->setGeometry(240,70,50,25);
     QObject::connect(quit_button,SIGNAL(clicked()),&a,SLOT(quit()));
 
