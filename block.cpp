@@ -177,6 +177,13 @@ void Block::keyPressEvent(QKeyEvent *event)
                 b[i]->hide();
             s->hide();
 
+            score = 0;
+
+            for(int i =0;i<6;i++)
+                for(int j=0;j<6;j++)
+                    current[i][j] = 0;
+            savefile();
+
             QObject::connect(endreset,SIGNAL(clicked()),this,SLOT(game()));
             endreset->show();
             QMessageBox gameover_message;
