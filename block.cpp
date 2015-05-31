@@ -10,11 +10,17 @@
 #include<QPushButton>
 #include<QLCDNumber>
 #include<QMessageBox>
-
+#include<fstream>
 
 Block::Block(QWidget *parent): QLabel(parent){
 
     score= 0;
+
+
+    fread.setFileName("save.dat");
+    fread.open(QIODevice::ReadOnly);
+
+
 
     endscene = new QLabel(parent);
     endscene->setGeometry(0,0,500,400);
@@ -127,6 +133,7 @@ void Block::keyPressEvent(QKeyEvent *event)
             generateNewnumber();
             judge();
             hi();
+
     }
     else if(event->key() == Qt::Key_Down)
     {
@@ -134,6 +141,7 @@ void Block::keyPressEvent(QKeyEvent *event)
             generateNewnumber();
             judge();
             hi();
+
     }
     else if(event->key()== Qt::Key_Left)
     {
@@ -145,6 +153,7 @@ void Block::keyPressEvent(QKeyEvent *event)
             generateNewnumber();
             judge();
             hi();
+
     }
     else if(event->key() == Qt::Key_Right)
     {
@@ -156,7 +165,9 @@ void Block::keyPressEvent(QKeyEvent *event)
             generateNewnumber();
             judge();
             hi();
+
     }
+    savefile();
     }
     else if(isgameover()==true){
 
@@ -170,7 +181,7 @@ void Block::keyPressEvent(QKeyEvent *event)
             endreset->show();
             QMessageBox gameover_message;
             gameover_message.setText("game is over");
-            gameover_message.setGeometry(400,250,500,500);
+            gameover_message.setGeometry(350,350,500,500);
             gameover_message.setWindowTitle("gameover");
             QPushButton *OK_btn = gameover_message.addButton(tr("OK"),QMessageBox::AcceptRole);
             gameover_message.exec();
@@ -203,15 +214,69 @@ void Block::game()
     endscene->hide();
     endreset->hide();
     reset_button->show();
-    hi();
-    reset();
-    judge();
-    hi();
+    s->show();
+    readfile();
+    if(newgame ==36)
+    {
+        reset();
+        hi();
+        judge();
+        hi();
+    }
+    else
+    {
+        for(int i=0;i<6;i++)
+        {
+           for(int j =0;j<6;j++)
+            {
+                current[i][j] = temp[i][j];
 
+            }
+        }
+        hi();
+        judge();
+        hi();
+    }
 }
 
+void Block::savefile()
+{
+    save.setFileName("save.dat");
+    save.open(QIODevice::ReadWrite);
+    QTextStream out(&save);
+    out<<score<<endl;
+    for(int i=0;i<6;i++)
+    {
+       for(int j =0;j<6;j++)
+        {
+            out<<current[i][j]<<endl;
 
+        }
+    }
+    save.close();
+}
 
+void Block::readfile()
+{
+    newgame =0;
+    QTextStream in(&fread);
+    QString line;
+    line = in.readLine();
+    score = line.toInt();
+    for(int i=0;i<6;i++)
+    {
+        for(int j =0;j<6;j++)
+        {
+            line = in.readLine();
+            temp[i][j]= line.toInt();
+            if(temp[i][j] == 0)
+            {
+                newgame ++;
+            }
+        }
+    }
+
+}
 
 void Block::hi()
 {
@@ -274,6 +339,7 @@ void Block::merge()
                 current[j][i] = current[j-1][i] + current[j][i];
                 current[j-1][i] =0;
                 canmove++;
+                gameover=false;
                 score = score+current[j][i];
             }
         }
@@ -303,13 +369,12 @@ void Block::generateNewnumber()
 
 void Block::rotate()
 {
-    int temp[4][4];
     for(int i=1;i<5;i++)
     {
         int k=0;
         for(int j = 4;j>0;j--)
         {
-            temp[i-1][k] = current[i][j];
+            rot[i-1][k] = current[i][j];
             k++;
         }
     }
@@ -317,7 +382,7 @@ void Block::rotate()
     {
         for(int j=1;j<5;j++)
         {
-            current[j][i] = temp[i-1][j-1];
+            current[j][i] = rot[i-1][j-1];
         }
     }
 }

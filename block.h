@@ -4,6 +4,8 @@
 #include<cstdio>
 #include<cstdlib>
 #include<iostream>
+#include<fstream>
+#include<QFile>
 #include<QObject>
 #include<QLabel>
 #include<QWidget>
@@ -23,6 +25,8 @@ public:
 public slots:
     void game();
 private:
+    void savefile();
+    void readfile();
     void hi();
     void movedata();
     void move();
@@ -31,8 +35,13 @@ private:
     void rotate();
     void judge();
     bool endofgame();
+    int temp[6][6];
+    int rot[4][4];
     bool gameover;
     int canmove;
+    QFile save;
+    QFile fread;
+    int newgame;
     QPushButton *reset_button;
     QPushButton *endreset;
     QLabel *endscene;

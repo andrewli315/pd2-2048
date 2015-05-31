@@ -19,3 +19,9 @@ HEADERS  += \
     block.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    2048.qrc
+
+DISTFILES += \
+    2048.png
